@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
+import mongoose from 'mongoose';
 
 import connectDB from './config/db';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
@@ -97,55 +98,62 @@ if (frontendDist) {
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-// Start server
-const startServer = async () => {
+// Start HTTP server immediately so Render detects the port
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
+  console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
+});
+
+// Connect to MongoDB and seed once connected
+const initDB = async () => {
   await connectDB();
 
-  // Seed default admin if none exists
-  try {
-    const User = (await import('./models/User')).default;
-    const { generateReferralCode } = await import('./utils/helpers');
-    const adminEmail = process.env.ADMIN_EMAIL || 'admin@nxtwave.tech';
-    const existingAdmin = await User.findOne({ email: adminEmail });
-    if (!existingAdmin) {
-      const admin = new User({
-        name: process.env.ADMIN_NAME || 'Platform Admin',
-        email: adminEmail,
-        password: process.env.ADMIN_PASSWORD || 'Admin@123456',
-        role: 'admin',
-        emailVerified: true,
-        college: 'NxtWave',
-        branch: 'Administration',
-        graduationYear: 2025,
-        referralCode: generateReferralCode('ADMIN'),
-      });
-      await admin.save();
-      console.log(`✅ Default admin created on startup: ${adminEmail}`);
+  mongoose.connection.once('open', async () => {
+    // Seed default admin if none exists
+    try {
+      const User = (await import('./models/User')).default;
+      const { generateReferralCode } = await import('./utils/helpers');
+      const adminEmail = process.env.ADMIN_EMAIL || 'admin@nxtwave.tech';
+      const existingAdmin = await User.findOne({ email: adminEmail });
+      if (!existingAdmin) {
+        const admin = new User({
+          name: process.env.ADMIN_NAME || 'Platform Admin',
+          email: adminEmail,
+          password: process.env.ADMIN_PASSWORD || 'Admin@123456',
+          role: 'admin',
+          emailVerified: true,
+          college: 'NxtWave',
+          branch: 'Administration',
+          graduationYear: 2025,
+          referralCode: generateReferralCode('ADMIN'),
+        });
+        await admin.save();
+        console.log(`✅ Default admin created on startup: ${adminEmail}`);
+      }
+    } catch (err) {
+      console.warn('⚠️ Admin auto-seed notice:', err);
     }
-  } catch (err) {
-    console.warn('⚠️ Admin auto-seed notice:', err);
-  }
 
-  // Seed default workshop if none exists
-  const Workshop = (await import('./models/Workshop')).default;
-  const workshopCount = await Workshop.countDocuments();
-  if (workshopCount === 0) {
-    await Workshop.create({
-      title: 'Build Your First AI Project in 60 Minutes',
-      description:
-        'Go from AI curiosity to a working project. A free, beginner-friendly online workshop designed for aspiring engineers. Learn how to build a real AI project from scratch with hands-on guidance.',
-      duration: 60,
-      status: 'published',
-    });
-    console.log('📦 Default workshop created');
-  }
-
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-    console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
+    // Seed default workshop if none exists
+    try {
+      const Workshop = (await import('./models/Workshop')).default;
+      const workshopCount = await Workshop.countDocuments();
+      if (workshopCount === 0) {
+        await Workshop.create({
+          title: 'Build Your First AI Project in 60 Minutes',
+          description:
+            'Go from AI curiosity to a working project. A free, beginner-friendly online workshop designed for aspiring engineers. Learn how to build a real AI project from scratch with hands-on guidance.',
+          duration: 60,
+          status: 'published',
+        });
+        console.log('📦 Default workshop created');
+      }
+    } catch (err) {
+      console.warn('⚠️ Workshop auto-seed notice:', err);
+    }
   });
 };
 
-startServer().catch(console.error);
+initDB().catch(console.error);
 
 export default app;
