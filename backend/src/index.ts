@@ -3,6 +3,8 @@ import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
+import path from 'path';
+import fs from 'fs';
 
 import connectDB from './config/db';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
@@ -72,6 +74,18 @@ app.use('/api/registrations', registrationRoutes);
 app.use('/api/referrals', referralRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/admin/ambassadors', ambassadorRoutes);
+
+// Serve frontend static files if built
+const frontendDist = path.resolve(__dirname, '../../frontend/dist');
+if (fs.existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) {
+      return next();
+    }
+    res.sendFile(path.join(frontendDist, 'index.html'));
+  });
+}
 
 // Error handling
 app.use(notFoundHandler);

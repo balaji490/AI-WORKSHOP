@@ -1,0 +1,10 @@
+{
+  "name": "nxtwave-ai-workshop-platform",
+  "version": "1.0.0",
+  "private": true,
+  "description": "NxtWave AI Workshop Growth Platform - Fullstack App",
+  "scripts": {
+    "build": "npm --prefix frontend install && npm --prefix frontend run build && npm --prefix backend install && npm --prefix backend run build",
+    "start": "npm --prefix backend start"
+  }
+}
