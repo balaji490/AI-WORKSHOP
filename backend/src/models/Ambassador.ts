@@ -26,7 +26,6 @@ const ambassadorSchema = new Schema<IAmbassador>(
   { timestamps: true }
 );
 
-ambassadorSchema.index({ referralCode: 1 });
 ambassadorSchema.index({ status: 1 });
 
 export default mongoose.model<IAmbassador>('Ambassador', ambassadorSchema);
