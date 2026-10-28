@@ -104,55 +104,66 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
 });
 
+// Seed default data
+const seedData = async () => {
+  // Seed default admin
+  try {
+    const User = (await import('./models/User')).default;
+    const { generateReferralCode } = await import('./utils/helpers');
+    const adminEmail = (process.env.ADMIN_EMAIL || 'admin@nxtwave.tech').toLowerCase();
+    const adminPassword = process.env.ADMIN_PASSWORD || 'Admin@123456';
+    let admin = await User.findOne({ email: adminEmail });
+    if (!admin) {
+      admin = new User({
+        name: process.env.ADMIN_NAME || 'Platform Admin',
+        email: adminEmail,
+        password: adminPassword,
+        role: 'admin',
+        emailVerified: true,
+        college: 'NxtWave',
+        branch: 'Administration',
+        graduationYear: 2025,
+        referralCode: generateReferralCode('ADMIN'),
+      });
+      await admin.save();
+      console.log(`✅ Default admin created on startup: ${adminEmail}`);
+    } else {
+      admin.password = adminPassword;
+      admin.role = 'admin';
+      admin.emailVerified = true;
+      await admin.save();
+      console.log(`✅ Default admin verified & synchronized: ${adminEmail}`);
+    }
+  } catch (err: any) {
+    console.warn('⚠️ Admin auto-seed error:', err.message || err);
+  }
+
+  // Seed default workshop
+  try {
+    const Workshop = (await import('./models/Workshop')).default;
+    const workshopCount = await Workshop.countDocuments();
+    if (workshopCount === 0) {
+      await Workshop.create({
+        title: 'Build Your First AI Project in 60 Minutes',
+        description:
+          'Go from AI curiosity to a working project. A free, beginner-friendly online workshop designed for aspiring engineers. Learn how to build a real AI project from scratch with hands-on guidance.',
+        duration: 60,
+        status: 'published',
+      });
+      console.log('📦 Default workshop created');
+    }
+  } catch (err: any) {
+    console.warn('⚠️ Workshop auto-seed error:', err.message || err);
+  }
+};
+
 // Connect to MongoDB and seed once connected
 const initDB = async () => {
   await connectDB();
-
-  mongoose.connection.once('open', async () => {
-    // Seed default admin if none exists
-    try {
-      const User = (await import('./models/User')).default;
-      const { generateReferralCode } = await import('./utils/helpers');
-      const adminEmail = process.env.ADMIN_EMAIL || 'admin@nxtwave.tech';
-      const existingAdmin = await User.findOne({ email: adminEmail });
-      if (!existingAdmin) {
-        const admin = new User({
-          name: process.env.ADMIN_NAME || 'Platform Admin',
-          email: adminEmail,
-          password: process.env.ADMIN_PASSWORD || 'Admin@123456',
-          role: 'admin',
-          emailVerified: true,
-          college: 'NxtWave',
-          branch: 'Administration',
-          graduationYear: 2025,
-          referralCode: generateReferralCode('ADMIN'),
-        });
-        await admin.save();
-        console.log(`✅ Default admin created on startup: ${adminEmail}`);
-      }
-    } catch (err) {
-      console.warn('⚠️ Admin auto-seed notice:', err);
-    }
-
-    // Seed default workshop if none exists
-    try {
-      const Workshop = (await import('./models/Workshop')).default;
-      const workshopCount = await Workshop.countDocuments();
-      if (workshopCount === 0) {
-        await Workshop.create({
-          title: 'Build Your First AI Project in 60 Minutes',
-          description:
-            'Go from AI curiosity to a working project. A free, beginner-friendly online workshop designed for aspiring engineers. Learn how to build a real AI project from scratch with hands-on guidance.',
-          duration: 60,
-          status: 'published',
-        });
-        console.log('📦 Default workshop created');
-      }
-    } catch (err) {
-      console.warn('⚠️ Workshop auto-seed notice:', err);
-    }
-  });
+  await seedData();
 };
+
+mongoose.connection.on('connected', seedData);
 
 initDB().catch(console.error);
 

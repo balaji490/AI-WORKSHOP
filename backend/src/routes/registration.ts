@@ -1,4 +1,5 @@
 import { Router, Response } from 'express';
+import mongoose from 'mongoose';
 import Registration from '../models/Registration';
 import Workshop from '../models/Workshop';
 import Referral from '../models/Referral';
@@ -18,19 +19,26 @@ router.post(
       const userId = req.user?._id;
       const { workshopId, channel, referralCode } = req.body;
 
-      // Find workshop
+      // Find workshop safely
       let workshop;
-      if (workshopId) {
+      if (workshopId && mongoose.Types.ObjectId.isValid(workshopId)) {
         workshop = await Workshop.findById(workshopId);
-      } else {
-        // Default to the first published workshop
+      }
+      if (!workshop) {
+        // Default to the first published or available workshop
         workshop = await Workshop.findOne({ status: { $in: ['published', 'scheduled', 'draft'] } })
           .sort({ createdAt: -1 });
       }
 
+      // Auto-create default workshop if none exists in database
       if (!workshop) {
-        res.status(404).json({ error: 'Workshop not found' });
-        return;
+        workshop = await Workshop.create({
+          title: 'Build Your First AI Project in 60 Minutes',
+          description:
+            'Go from AI curiosity to a working project. A free, beginner-friendly online workshop designed for aspiring engineers. Learn how to build a real AI project from scratch with hands-on guidance.',
+          duration: 60,
+          status: 'published',
+        });
       }
 
       // Check for existing registration
@@ -40,8 +48,8 @@ router.post(
       });
 
       if (existingReg) {
-        res.status(409).json({
-          error: 'You are already registered for this workshop',
+        res.status(200).json({
+          message: 'Already registered for this workshop',
           registration: existingReg,
         });
         return;
