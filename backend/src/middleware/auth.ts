@@ -71,13 +71,13 @@ export const generateTokens = (user: IUser) => {
   const accessToken = jwt.sign(
     { userId: user._id.toString(), role: user.role },
     process.env.JWT_SECRET || 'dev-secret',
-    { expiresIn: process.env.JWT_EXPIRES_IN || '15m' }
+    { expiresIn: (process.env.JWT_EXPIRES_IN || '15m') as any }
   );
 
   const refreshToken = jwt.sign(
     { userId: user._id.toString(), role: user.role },
     process.env.JWT_REFRESH_SECRET || 'dev-refresh-secret',
-    { expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d' }
+    { expiresIn: (process.env.JWT_REFRESH_EXPIRES_IN || '7d') as any }
   );
 
   return { accessToken, refreshToken };

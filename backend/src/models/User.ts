@@ -74,7 +74,7 @@ userSchema.methods.comparePassword = async function (
 
 // Never return password in JSON
 userSchema.set('toJSON', {
-  transform: (_doc, ret) => {
+  transform: (_doc, ret: any) => {
     delete ret.password;
     delete ret.emailVerificationToken;
     delete ret.emailVerificationExpires;
