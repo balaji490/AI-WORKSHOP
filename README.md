@@ -1,209 +1,196 @@
-# NxtWave AI Workshop Growth Platform
+# 🚀 NxtWave AI Workshop — Growth & Registration Platform
 
-A production-quality web application for managing the **"Build Your First AI Project in 60 Minutes"** workshop campaign. Built for the NxtWave Growth Intern Challenge.
+[![Live Demo](https://img.shields.io/badge/Demo-Live%20on%20Render-brightgreen?style=for-the-badge&logo=render)](https://ai-workshop-3osh.onrender.com)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React 19](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS_v4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Node.js](https://img.shields.io/badge/Node.js_Express-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![MongoDB Atlas](https://img.shields.io/badge/MongoDB_Atlas-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/atlas)
 
-## 🎯 Campaign Goals
-- **500** student registrations
-- **7-day** campaign window
-- **₹2,000** maximum marketing budget
-- Target: Final-year engineering students
+A full-stack, production-grade growth marketing and event registration platform built for the **"Build Your First AI Project in 60 Minutes"** campaign. Designed to scale organic student acquisition through automated referral loops, campus ambassador workflows, real-time analytics, and budget tracking.
 
-## 🏗 Tech Stack
+---
 
-### Frontend
-- React 19 + Vite + TypeScript
-- Tailwind CSS v4
-- Framer Motion (animations)
-- Recharts (analytics charts)
-- Lucide React (icons)
+## 🌐 Live Demo & Deployment
 
-### Backend
-- Node.js + Express + TypeScript
-- MongoDB with Mongoose
-- JWT authentication (HTTP-only cookies)
-- Zod validation
-- bcrypt password hashing
-- Rate limiting
+| Resource | Link |
+|---|---|
+| **Live Web App** | [https://ai-workshop-3osh.onrender.com](https://ai-workshop-3osh.onrender.com) |
+| **GitHub Repository** | [balaji490/AI-WORKSHOP](https://github.com/balaji490/AI-WORKSHOP) |
+| **Admin Login** | [https://ai-workshop-3osh.onrender.com/admin/login](https://ai-workshop-3osh.onrender.com/admin/login) |
+| **User Registration** | [https://ai-workshop-3osh.onrender.com/signup](https://ai-workshop-3osh.onrender.com/signup) |
+| **Health Check API** | [https://ai-workshop-3osh.onrender.com/api/health](https://ai-workshop-3osh.onrender.com/api/health) |
 
-## 🚀 Local Setup
+### 🔑 Demo Credentials
+
+| Role | Email | Password | Quick Access |
+|---|---|---|---|
+| **Platform Admin** | `admin@nxtwave.tech` | `Admin@123456` | Click **Auto-fill** on the Admin Login page |
+| **Student** | Any email | Any password | Sign up at `/signup` or use existing account |
+
+---
+
+## 🎯 Campaign Objectives
+
+- **Target Registrations**: 500+ final-year engineering students
+- **Campaign Timeline**: 7-day promotional window
+- **Maximum Marketing Budget**: ₹2,000 (Target Cost Per Registration: < ₹4.00)
+- **Primary Acquisition Channels**: WhatsApp Communities, Campus Ambassadors, College Clubs, and Peer-to-Peer Referrals
+
+---
+
+## 🛠 Skills & Technical Capabilities Demonstrated
+
+### 1. Frontend Engineering
+- **Modern UI/UX**: Built with **React 19**, **Vite**, and **TypeScript**, styled using a custom design system with **Tailwind CSS v4** and glassmorphism.
+- **Dynamic Animations**: Fluid transitions with **Framer Motion** and responsive data visualization using **Recharts**.
+- **Component Architecture**: Modular, reusable components with Radix UI accessibility primitives and Lucide icons.
+- **State Management & Routing**: Robust client-side routing with **React Router v6** and context-driven authentication.
+
+### 2. Backend & Systems Architecture
+- **Enterprise Node.js + Express**: Scalable RESTful API written strictly in **TypeScript**.
+- **Resilient Database Layer**: **MongoDB** with **Mongoose ODM**, connection retry loops, and optimized indexing.
+- **Auto-Bootstrapping**: Automatic database seeding on startup for default admin accounts, campaigns, and workshop templates.
+- **Unified Monorepo Deployment**: Dual-mode serving where Express serves the compiled React single-page application and API from a single host, eliminating CORS latency and cookie blocking.
+
+### 3. Security & Compliance
+- **Authentication**: JWT token lifecycle management with HTTP-only, secure, SameSite cookies and localStorage fallback.
+- **Password Security**: Strong salt hashing with **bcrypt** (12 rounds).
+- **Data Integrity & Validation**: Type-safe schema validation powered by **Zod**.
+- **Defense-in-depth**: **Helmet** security headers, CORS origin controls, and Express rate limiting on sensitive auth endpoints.
+
+### 4. Growth Marketing & Product Mechanics
+- **Viral Referral Engine**: Custom unique referral codes per student with instant 1-click WhatsApp and social sharing.
+- **Attribution & Anti-Fraud**: Strict prevention of self-referrals and duplicate attributions with transactional integrity.
+- **Real-Time Growth Dashboard**: Visual funnel metrics, daily registration velocity, channel breakdowns, and cost-per-registration calculations.
+- **Data Portability**: Instant CSV export of participant data for marketing CRM workflows.
+
+---
+
+## 🏛 System Architecture
+
+```mermaid
+graph TD
+    Client["Client Browser (React 19 + Vite SPA)"]
+    Server["Express Web Server (Node.js + TS on Render)"]
+    Static["Static SPA Assets (dist/index.html)"]
+    API["RESTful API (/api/*)"]
+    DB[("MongoDB Atlas Cloud Database")]
+
+    Client -->|HTTP GET /| Server
+    Server -->|Serve UI| Static
+    Client -->|Axios REST /api/auth, /api/registrations| API
+    API -->|Mongoose Queries| DB
+```
+
+---
+
+## 📱 Application Pages & Routes
+
+| Route | Access | Purpose |
+|---|---|---|
+| `/` | Public | High-converting workshop landing page with agenda, mentors, roadmap, and FAQs |
+| `/signup` | Public | Student signup with college, branch, and referral code auto-fill |
+| `/login` | Public | Student login with clear status indicators |
+| `/onboarding` | Authenticated | 1-click workshop confirmation and instant referral link generator |
+| `/dashboard` | Authenticated | Student dashboard tracking referral credits, rank, and workshop prep |
+| `/r/:code` | Public | Referral landing route that auto-attributes credit on signup |
+| `/admin/login` | Public | Secure admin login with 1-click credential auto-fill |
+| `/admin` | Admin | Real-time growth analytics, daily velocity charts, and budget tracker |
+| `/admin/registrations` | Admin | Searchable, paginated registration table with CSV export |
+| `/admin/ambassadors` | Admin | Campus ambassador management and custom code generation |
+| `/admin/campaigns` | Admin | Channel budget allocation and promotional message templates |
+
+---
+
+## 📂 Project Structure
+
+```
+├── backend/
+│   ├── src/
+│   │   ├── config/          # MongoDB connection & retry handler
+│   │   ├── middleware/      # Auth, error handling, rate limiting
+│   │   ├── models/          # User, Workshop, Registration, Referral, Campaign
+│   │   ├── routes/          # REST endpoints (auth, user, admin, workshops)
+│   │   ├── scripts/         # Standalone database seeders
+│   │   ├── utils/           # Zod validation schemas and helpers
+│   │   └── index.ts         # Express server, CORS & static frontend serving
+│   ├── package.json
+│   └── tsconfig.json
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/      # Navbar, Footer, Skeletons, ProtectedRoute
+│   │   ├── context/         # AuthContext and ToastContext
+│   │   ├── lib/             # Axios API client and helper functions
+│   │   ├── pages/           # Landing, Dashboard, Admin, Onboarding, Login
+│   │   ├── App.tsx          # Router configuration
+│   │   └── index.css        # Tailwind CSS v4 & custom glassmorphism styles
+│   ├── package.json
+│   └── vite.config.ts
+│
+├── package.json             # Root orchestrator for single-service build
+└── README.md
+```
+
+---
+
+## 💻 Local Development Setup
 
 ### Prerequisites
-- Node.js 18+
-- MongoDB (local or Atlas)
-- npm or yarn
+- **Node.js**: v18 or higher
+- **MongoDB**: Local MongoDB instance or free MongoDB Atlas cluster
 
-### 1. Clone and install
-
+### 1. Clone Repository
 ```bash
-# Backend
-cd backend
-cp .env.example .env
-# Edit .env with your MongoDB URI
-npm install
-
-# Frontend
-cd ../frontend
-npm install
+git clone https://github.com/balaji490/AI-WORKSHOP.git
+cd AI-WORKSHOP
 ```
 
-### 2. Start MongoDB
-
-```bash
-# If using local MongoDB
-mongod --dbpath /data/db
+### 2. Configure Environment Variables
+Create `backend/.env`:
+```env
+PORT=5000
+NODE_ENV=development
+MONGODB_URI=mongodb://localhost:27017/nxtwave-workshop
+JWT_SECRET=dev-jwt-secret-change-in-production
+JWT_REFRESH_SECRET=dev-refresh-secret-change-in-production
+JWT_EXPIRES_IN=15m
+JWT_REFRESH_EXPIRES_IN=7d
+FRONTEND_URL=http://localhost:5173
+ADMIN_EMAIL=admin@nxtwave.tech
+ADMIN_PASSWORD=Admin@123456
 ```
 
-### 3. Seed admin account
-
+### 3. Install & Run
 ```bash
-cd backend
-npm run seed:admin
+# Install all dependencies and run dev servers:
+npm run build    # Builds both frontend and backend
+npm start        # Starts the unified server on http://localhost:5000
 ```
+Or run individually:
+- Backend: `cd backend && npm run dev` (Runs on port 5000)
+- Frontend: `cd frontend && npm run dev` (Runs on port 5173 with proxy to 5000)
 
-This creates:
-- Admin account: `admin@nxtwave.tech` / `Admin@123456`
-- Default workshop: "Build Your First AI Project in 60 Minutes"
-- Default campaign with 8 channels
+---
 
-### 4. Start development servers
+## ☁️ Deployment on Render
 
-```bash
-# Terminal 1 — Backend
-cd backend
-npm run dev
+This project is configured to deploy as a **Single Web Service** on Render with zero external dependencies:
 
-# Terminal 2 — Frontend
-cd frontend
-npm run dev
-```
+1. Connect `balaji490/AI-WORKSHOP` on [Render](https://dashboard.render.com).
+2. Set **Runtime**: `Node`
+3. Set **Build Command**: `npm run build`
+4. Set **Start Command**: `npm start`
+5. Configure Environment Variables:
+   - `NODE_ENV`: `production`
+   - `MONGODB_URI`: `mongodb+srv://<user>:<password>@cluster.mongodb.net/nxtwave?retryWrites=true&w=majority`
+   - `JWT_SECRET`: *(your secret)*
+   - `JWT_REFRESH_SECRET`: *(your refresh secret)*
 
-- Frontend: http://localhost:5173
-- Backend API: http://localhost:5000
+---
 
-## 📋 Application Routes
+## 📄 License & Credits
 
-| Route | Access | Description |
-|-------|--------|-------------|
-| `/` | Public | Workshop landing page |
-| `/signup` | Public | Student registration |
-| `/login` | Public | User login |
-| `/r/:code` | Public | Referral redirect & attribution |
-| `/onboarding` | Auth | Registration confirmation |
-| `/dashboard` | Auth | Student dashboard |
-| `/admin/login` | Public | Admin login |
-| `/admin` | Admin | Growth dashboard |
-| `/admin/registrations` | Admin | Registration management |
-| `/admin/ambassadors` | Admin | Ambassador management |
-| `/admin/campaigns` | Admin | Campaign & budget management |
-
-## 🔐 Security Features
-
-- bcrypt password hashing (12 rounds)
-- JWT with HTTP-only cookies
-- Token refresh flow
-- Rate limiting on auth endpoints
-- Server-side role authorization
-- Zod input validation
-- CORS configured for frontend origin
-- Helmet security headers
-- No sensitive data in responses
-
-## 📊 Key Features
-
-### For Students
-- Public landing page (no login required)
-- Account registration with validation
-- Unique referral link generation
-- WhatsApp/native sharing
-- Referral activity tracking
-- Referral leaderboard
-- Profile management
-
-### For Admins
-- Real-time registration analytics
-- Daily registration charts
-- Channel performance tracking
-- Budget management
-- Ambassador management
-- CSV export
-- Message templates for promotion
-- Workshop settings management
-
-## 🗄 Database Models
-
-1. **Users** — accounts with roles, referral codes
-2. **Workshops** — configurable workshop details
-3. **Registrations** — one per user per workshop (unique)
-4. **Referrals** — attribution tracking with duplicate prevention
-5. **Ambassadors** — campus ambassador records
-6. **Campaigns** — growth campaign configuration
-7. **CampaignChannels** — per-channel budgets and targets
-8. **CampaignEvents** — campaign activity logging
-
-## 📡 API Endpoints
-
-### Auth
-- `POST /api/auth/signup` — Create account
-- `POST /api/auth/login` — Login
-- `POST /api/auth/logout` — Logout
-- `POST /api/auth/refresh` — Refresh token
-- `GET /api/auth/me` — Current user
-- `POST /api/auth/verify-email` — Verify email
-- `POST /api/auth/forgot-password` — Initiate reset
-- `POST /api/auth/reset-password` — Complete reset
-
-### User
-- `GET /api/user/profile` — Get profile
-- `PUT /api/user/profile` — Update profile
-
-### Workshops
-- `GET /api/workshops` — List published workshops
-- `GET /api/workshops/:id` — Get workshop details
-
-### Registrations
-- `POST /api/registrations` — Register for workshop
-- `GET /api/registrations/my` — My registrations
-- `GET /api/registrations/my/status` — Quick status check
-
-### Referrals
-- `GET /api/referrals/validate/:code` — Validate referral code
-- `GET /api/referrals/my` — My referral stats
-- `GET /api/referrals/leaderboard` — Public leaderboard
-
-### Admin
-- `GET /api/admin/stats` — Dashboard summary
-- `GET /api/admin/registrations` — Paginated registrations
-- `GET /api/admin/registrations/export` — CSV export
-- `GET /api/admin/analytics/daily` — Daily chart data
-- `GET /api/admin/analytics/channels` — Channel breakdown
-- Campaign, channel, ambassador CRUD endpoints
-
-## 🚢 Deployment
-
-### Frontend (Vercel)
-```bash
-cd frontend
-npm run build
-# Deploy dist/ to Vercel
-```
-
-### Backend (Render)
-```bash
-cd backend
-npm run build
-# Deploy with start command: node dist/index.js
-```
-
-### Environment Variables
-Set all variables from `.env.example` in your hosting platform. Never commit `.env` files.
-
-## ⚠️ Limitations
-
-- Email verification is auto-approved in development mode
-- Password reset tokens are logged to console (no email service configured)
-- No real payment processing for budget tracking
-- Analytics reflect actual database records only
-
-## 📝 License
-
-Built for the NxtWave Growth Intern Challenge.
+Developed for the **NxtWave Growth Intern Challenge**.  
+All rights reserved © 2026 Balaji Narra.
