@@ -36,7 +36,14 @@ const Login: React.FC = () => {
       addToast('Welcome back!', 'success');
       navigate(data.user.role === 'admin' ? '/admin' : from, { replace: true });
     } catch (err: any) {
-      const msg = err.response?.data?.error || 'Login failed. Please try again.';
+      let msg = err.response?.data?.error;
+      if (!msg) {
+        if (!err.response) {
+          msg = 'Unable to reach backend server. Please verify the backend is running.';
+        } else {
+          msg = 'Invalid email or password';
+        }
+      }
       setError(msg);
       addToast(msg, 'error');
     } finally {

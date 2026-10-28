@@ -26,8 +26,28 @@ const PORT = parseInt(process.env.PORT || '5000', 10);
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' },
 }));
+
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:3000',
+  process.env.FRONTEND_URL,
+].filter(Boolean) as string[];
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (
+      allowedOrigins.includes(origin) ||
+      (process.env.FRONTEND_URL && origin === process.env.FRONTEND_URL.replace(/\/$/, '')) ||
+      origin.endsWith('.onrender.com') ||
+      origin.endsWith('.vercel.app')
+    ) {
+      return callback(null, true);
+    }
+    // In production or development, allow origin with credentials
+    return callback(null, true);
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -60,6 +80,31 @@ app.use(errorHandler);
 // Start server
 const startServer = async () => {
   await connectDB();
+
+  // Seed default admin if none exists
+  try {
+    const User = (await import('./models/User')).default;
+    const { generateReferralCode } = await import('./utils/helpers');
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@nxtwave.tech';
+    const existingAdmin = await User.findOne({ email: adminEmail });
+    if (!existingAdmin) {
+      const admin = new User({
+        name: process.env.ADMIN_NAME || 'Platform Admin',
+        email: adminEmail,
+        password: process.env.ADMIN_PASSWORD || 'Admin@123456',
+        role: 'admin',
+        emailVerified: true,
+        college: 'NxtWave',
+        branch: 'Administration',
+        graduationYear: 2025,
+        referralCode: generateReferralCode('ADMIN'),
+      });
+      await admin.save();
+      console.log(`✅ Default admin created on startup: ${adminEmail}`);
+    }
+  } catch (err) {
+    console.warn('⚠️ Admin auto-seed notice:', err);
+  }
 
   // Seed default workshop if none exists
   const Workshop = (await import('./models/Workshop')).default;

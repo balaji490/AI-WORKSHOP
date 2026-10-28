@@ -33,10 +33,25 @@ const AdminLogin: React.FC = () => {
       addToast('Welcome to the admin dashboard', 'success');
       navigate('/admin', { replace: true });
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Login failed');
+      let msg = err.response?.data?.error;
+      if (!msg) {
+        if (!err.response) {
+          msg = 'Unable to connect to backend server. Please make sure the backend is running.';
+        } else {
+          msg = 'Invalid credentials or login failed';
+        }
+      }
+      setError(msg);
+      addToast(msg, 'error');
     } finally {
       setLoading(false);
     }
+  };
+
+  const fillDefaultAdmin = () => {
+    setEmail('admin@nxtwave.tech');
+    setPassword('Admin@123456');
+    setError('');
   };
 
   return (
@@ -57,6 +72,23 @@ const AdminLogin: React.FC = () => {
               <p className="text-sm text-rose-400">{error}</p>
             </div>
           )}
+
+          {/* Quick Fill Helper */}
+          <div className="mb-6 p-3 rounded-xl flex items-center justify-between"
+            style={{ background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.2)' }}>
+            <div className="text-xs">
+              <span className="font-semibold text-indigo-300 block">Default Admin Account:</span>
+              <span className="text-slate-400 font-mono">admin@nxtwave.tech / Admin@123456</span>
+            </div>
+            <button
+              type="button"
+              onClick={fillDefaultAdmin}
+              className="px-2.5 py-1 text-xs rounded-lg font-medium text-white transition-colors"
+              style={{ background: '#6366f1' }}
+            >
+              Auto-fill
+            </button>
+          </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
