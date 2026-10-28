@@ -76,8 +76,14 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/admin/ambassadors', ambassadorRoutes);
 
 // Serve frontend static files if built
-const frontendDist = path.resolve(__dirname, '../../frontend/dist');
-if (fs.existsSync(frontendDist)) {
+const candidatePaths = [
+  path.resolve(__dirname, '../../frontend/dist'),
+  path.resolve(process.cwd(), 'frontend/dist'),
+  path.resolve(process.cwd(), '../frontend/dist'),
+];
+const frontendDist = candidatePaths.find((p) => fs.existsSync(p));
+if (frontendDist) {
+  console.log(`🌐 Serving frontend from: ${frontendDist}`);
   app.use(express.static(frontendDist));
   app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api')) {
